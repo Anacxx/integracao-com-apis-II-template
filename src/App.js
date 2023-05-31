@@ -23,26 +23,39 @@ function App() {
     getUsuarios();
   }, []);
 
-  const getUsuarios = () => {
-    axios
-      .get(
-        BASE_URL,
+  const getUsuarios = async() => {
+    try{
+      const res = await axios.get(BASE_URL,
         {
           headers: {
             Authorization: AUTH_TOKEN,
           },
         }
       )
-      .then((res) => {
-        setUsuarios(res.data);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
+      setUsuarios(res.data);
+    }catch(error){
+      console.log(error.response);
+    }
   };
 
-  const pesquisaUsuario = (pesquisa) => {
-   
+  const pesquisaUsuario =  async(pesquisa) => {
+   try {
+    const resposta = await axios.get(`${BASE_URL}/search?name=${nome}&email=${email}`, {
+      headers:{
+        Authorization: AUTH_TOKEN
+      }
+    })
+    if(resposta.data.length === 0){
+      alert('Usuário não encontrado')
+    }else{
+      setUsuarios(resposta.data);
+      setNome("")
+      setEmail("")
+    }
+    setUsuarios(resposta.data)
+   } catch (error) {
+      console.log(error.response)
+   }
   };
 
   const onChangeName = (e) => {

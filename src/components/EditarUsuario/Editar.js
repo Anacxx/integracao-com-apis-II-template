@@ -13,36 +13,35 @@ export const EditarUsuario = (props) => {
   const [editar, setEditar] = useState(false)
 
 
-  const getDadosUsuario = () => {
-    axios
-      .get(
-        `${BASE_URL}/${props.id}`,
+  const getDadosUsuario = async() => {
+    try {
+      const res = await axios.get(`${BASE_URL}/${props.id}`,
         {
           headers: {
             Authorization: AUTH_TOKEN,
           },
         }
       )
-      .then((res) => {
-        setUsuario(res.data);
-        setEmail(res.data.email);
-        setName(res.data.name);
-      })
-      .catch((err) => {
-        console.log(err.response);
-      });
+      setUsuario(res.data);
+      setEmail(res.data.email);
+      setName(res.data.name);
+
+    } catch (error) {
+      console.log(error.response);
+    }
   };
 
   useEffect(() => {
     getDadosUsuario();
   }, []);
 
-  const editaUsuario = () => {
-    const body = {
+  const editaUsuario = async () => {
+    try {
+      const body = {
         name,
         email
       };
-      axios
+     await axios
         .put(
           `${BASE_URL}/${usuario.id}`,
           body,
@@ -52,10 +51,11 @@ export const EditarUsuario = (props) => {
             }
           }
         )
-        .then(() => {
-          getDadosUsuario();
-          setEditar(!editar)
-        });
+        getDadosUsuario();
+        setEditar(!editar)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const deletarUsuario = () => {
